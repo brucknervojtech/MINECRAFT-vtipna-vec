@@ -1,4 +1,4 @@
-package com.example;
+package com.example.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -13,17 +13,17 @@ public class ExampleModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         giveChestKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "Chest",
+            "Troll Chest",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_SEMICOLON,
-            "Super cool lol"
+            KeyBinding.Category.CREATIVE
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (giveChestKey.wasPressed()) {
                 if (client.player != null) {
-                    String myCommand = "give @p chest[container=[{item:{id:\"minecraft:diamond\",count:64},slot:0}]] 1";
-                    client.player.networkHandler.sendCommand(myCommand);
+                    String myCommand = "give @s chest[container=[{item:{id:\"minecraft:diamond\",count:64},slot:0}]] 1";
+                    client.player.networkHandler.sendChatCommand(myCommand);
                 }
             }
         });
