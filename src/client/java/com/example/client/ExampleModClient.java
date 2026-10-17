@@ -1,10 +1,31 @@
-package com.example.client;
+package com.example;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
+import org.lwjgl.glfw.GLFW;
 
 public class ExampleModClient implements ClientModInitializer {
-	@Override
-	public void onInitializeClient() {
-		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-	}
+    private static KeyBinding giveChestKey;
+
+    @Override
+    public void onInitializeClient() {
+        giveChestKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "Chest",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_SEMICOLON,
+            "Super cool lol"
+        ));
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (giveChestKey.wasPressed()) {
+                if (client.player != null) {
+                    String myCommand = "give @p chest[container=[{item:{id:\"minecraft:diamond\",count:64},slot:0}]] 1";
+                    client.player.networkHandler.sendCommand(myCommand);
+                }
+            }
+        });
+    }
 }
